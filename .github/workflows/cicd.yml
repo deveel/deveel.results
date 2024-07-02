@@ -55,12 +55,12 @@ jobs:
           run: dotnet restore
 
         - name: Setup GitFlow
-          uses: gittools/actions/gitversion/setup@v1.1.1
+          uses: gittools/actions/gitversion/setup@v0
           with:
             versionSpec: '5.x'
             
         - name: Determine Version
-          uses: gittools/actions/gitversion/execute@v1.1.1
+          uses: gittools/actions/gitversion/execute@v0
         
         - name: Build
           run: dotnet build -c Release --no-restore /p:Version="${{ env.GitVersion_SemVer }}-alpha.${{ env.GitVersion_preReleaseTag }}" /p:AssemblyVersion="${{ env.GitVersion_SemVer }}" /p:FileVersion="${{ env.GitVersion_SemVer }}"
