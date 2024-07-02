@@ -1,21 +1,92 @@
-﻿namespace Deveel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Deveel
 {
     /// <summary>
     /// Extensions for the <see cref="IOperationResult"/> contract.
     /// </summary>
     public static class OperationResultExtensions
     {
+        /// <summary>
+        /// Determines if the operation result is a success.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to check.
+        /// </param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the operation result is a success,
+        /// otherwise <see langword="false"/>.
+        /// </returns>
         public static bool IsSuccess(this IOperationResult result) 
             => result.ResultType == OperationResultType.Success;
 
+        /// <summary>
+        /// Determines if the operation result is an error.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to check.
+        /// </param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the operation result is an error,
+        /// otherwise <see langword="false"/>.
+        /// </returns>
         public static bool IsError(this IOperationResult result)
             => result.ResultType == OperationResultType.Error;
 
+        /// <summary>
+        /// Determines if the operation result is cancelled.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to check.
+        /// </param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the operation result is cancelled,
+        /// otherwise <see langword="false"/>.
+        /// </returns>
         public static bool IsCancelled(this IOperationResult result)
             => result.ResultType == OperationResultType.Cancelled;
 
+        /// <summary>
+        /// Determines if the operation has caused no changes
+        /// to the state of an object.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to check.
+        /// </param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the operation has not
+        /// caused any changes to the object, otherwise <see langword="false"/>.
+        /// </returns>
         public static bool IsUnchanged(this IOperationResult result)
             => result.ResultType == OperationResultType.Unchanged;
+
+        /// <summary>
+        /// Checks if the operation result has validation errors.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to check.
+        /// </param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the operation result is
+        /// an error and the type of the error is <see cref="IValidationError"/>,
+        /// otherwise <see langword="false"/>.
+        /// </returns>
+        public static bool HasValidationErrors(this IOperationResult result)
+            => result.IsError() && (result.Error is IValidationError);
+
+        /// <summary>
+        /// Gets the list of validation results that caused an operation
+        /// to fail.
+        /// </summary>
+        /// <param name="result">
+        /// The result that contains the validation errors.
+        /// </param>
+        /// <returns>
+        /// Returns a list of <see cref="ValidationResult"/> objects that
+        /// describe the validation errors that caused the operation to fail.
+        /// </returns>
+        public static IReadOnlyList<ValidationResult> ValidationResults(this IOperationResult result) 
+            => result.HasValidationErrors() ? ((IValidationError)result.Error!).ValidationResults : Array.Empty<ValidationResult>();
 
         public static TResult Match<TResult>(this IOperationResult result, 
             Func<TResult>? ifSuccess = null, 

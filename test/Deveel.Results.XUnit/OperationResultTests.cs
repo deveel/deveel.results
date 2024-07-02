@@ -1,5 +1,7 @@
 using Deveel;
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Deveel;
 
 public static class OperationResultTests
@@ -183,5 +185,20 @@ public static class OperationResultTests
     {
         var result = OperationResult.NotChanged;
         Assert.True(result.IsUnchanged());
+    }
+
+    [Fact]
+    public static void OperationResult_ValidationErrors()
+    {
+        var errors = new List<ValidationResult> {
+            new ValidationResult("The value is required", new[] { "value" }),
+            new ValidationResult("The value must be greater than 0", new[] { "value" })
+        };
+
+        var error = new OperationValidationError("err.1", "biz", errors);
+        var result = OperationResult.Fail(error);
+
+        Assert.True(result.HasValidationErrors());
+        Assert.Equal(errors, result.ValidationResults());
     }
 }

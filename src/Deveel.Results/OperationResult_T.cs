@@ -1,4 +1,6 @@
-﻿namespace Deveel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Deveel
 {
     public readonly struct OperationResult<T> : IOperationResult<T>
     {
@@ -42,18 +44,72 @@
             return new OperationResult<T>(OperationResultType.Success, value, null);
         }
 
+        /// <summary>
+        /// Creates a new instance of an operation result that has failed
+        /// because of an error.
+        /// </summary>
+        /// <param name="error">
+        /// The error that caused the operation to fail.
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult{T}"/> that
+        /// represents a failure in the operation.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the <paramref name="error"/> is <see langword="null"/>.
+        /// </exception>
         public static OperationResult<T> Fail(IOperationError error)
         {
             ArgumentNullException.ThrowIfNull(error, nameof(error));
             return new OperationResult<T>(OperationResultType.Error, default, error);
         }
 
+        /// <summary>
+        /// Creates a new instance of an operation result that has failed
+        /// because of an error.
+        /// </summary>
+        /// <param name="code">
+        /// The code of the error that caused the operation to fail.
+        /// </param>
+        /// <param name="domain">
+        /// The domain where the error occurred.
+        /// </param>
+        /// <param name="message">
+        /// A message that describes the error.
+        /// </param>
+        /// <param name="inner">
+        /// An inner error that caused the error.
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult{T}"/> that
+        /// represents a failure in the operation.
+        /// </returns>
         public static OperationResult<T> Fail(string code, string domain, string? message = null, IOperationError? inner = null)
         {
             ArgumentNullException.ThrowIfNull(code, nameof(code));
             ArgumentNullException.ThrowIfNull(domain, nameof(domain));
             return new OperationResult<T>(OperationResultType.Error, default, new OperationError(code, domain, message, inner));
         }
+
+        /// <summary>
+        /// Creates a new instance of an operation result that has failed
+        /// because of a validation error.
+        /// </summary>
+        /// <param name="code">
+        /// The code of the error that caused the operation to fail.
+        /// </param>
+        /// <param name="domain">
+        /// The domain where the error occurred.
+        /// </param>
+        /// <param name="results">
+        /// The list of validation results that caused the error.
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult{T}"/> that
+        /// represents a failure in the operation.
+        /// </returns>
+        public static OperationResult<T> ValidationFailed(string code, string domain, IEnumerable<ValidationResult> results)
+            => Fail(new OperationValidationError(code, domain, results.ToList()));
 
         public static implicit operator OperationResult<T>(OperationResult result)
             => new OperationResult<T>(result.ResultType, default, result.Error);

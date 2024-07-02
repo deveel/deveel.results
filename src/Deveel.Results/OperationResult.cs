@@ -1,4 +1,6 @@
-﻿namespace Deveel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Deveel
 {
     /// <summary>
     /// An operation result that has no value returned.
@@ -70,6 +72,26 @@
         /// </returns>
         public static OperationResult Fail(string code, string domain, string? message = null, IOperationError? inner = null)
             => Fail(new OperationError(code, domain, message, inner));
+
+        /// <summary>
+        /// Creates a new instance of an operation result that has failed
+        /// because of a validation error.
+        /// </summary>
+        /// <param name="code">
+        /// The code of the error that has caused the operation to fail.
+        /// </param>
+        /// <param name="domain">
+        /// The domain where the error has occurred.
+        /// </param>
+        /// <param name="validationResults">
+        /// The list of validation results that have caused the operation to fail.
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult"/> that represents
+        /// a failed operation.
+        /// </returns>
+        public static OperationResult ValidationFailed(string code, string domain, IEnumerable<ValidationResult> validationResults)
+            => Fail(new OperationValidationError(code, domain, validationResults.ToList()));
 
         /// <summary>
         /// Implicitly converts an instance of an error to an operation result.

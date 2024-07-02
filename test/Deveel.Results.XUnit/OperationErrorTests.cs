@@ -1,4 +1,6 @@
-﻿namespace Deveel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Deveel
 {
     public static class OperationErrorTests
     {
@@ -93,6 +95,21 @@
             var innerError = Assert.IsAssignableFrom<IOperationError>(exception.InnerException);
             Assert.Equal("err.2", innerError.Code);
             Assert.Equal("biz", innerError.Domain);
+        }
+
+        [Fact]
+        public static void ValidationError_WithResults()
+        {
+            var results = new[] {
+                new ValidationResult("First error of the validation", new []{ "Member1" }),
+                new ValidationResult("Second error of the validation", new []{"Member2"})
+            };
+
+            var error = new OperationValidationError("err.1", "biz", results);
+
+            Assert.Equal("err.1", error.Code);
+            Assert.Equal("biz", error.Domain);
+            Assert.Same(results, error.ValidationResults);
         }
     }
 }
