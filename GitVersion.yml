@@ -34,4 +34,4 @@ ignore:
 merge-message-formats: {}
 commit-message-incrementing: Enabled
 assembly-versioning-scheme: MajorMinorPatch
-continuous-delivery-fallback-tag: ci
+continuous-delivery-fallback-tag: alpha
