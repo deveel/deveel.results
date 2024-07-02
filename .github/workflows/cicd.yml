@@ -1,0 +1,77 @@
+name: Library Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:  
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    strategy:
+        fail-fast: false
+        matrix:
+          dotnet-version: [6.0.x,7.0.x,8.0.x]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      
+      - name: Install Dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore --nologo
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --no-restore --verbosity normal
+
+  publish:
+      name: Publish Package
+      runs-on: ubuntu-latest
+      needs: build
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+
+        - name: Setup .NET
+          uses: actions/setup-dotnet@v4
+          with:
+            dotnet-version: 8.0.x
+
+        - name: Install Dependencies
+          run: dotnet restore
+
+        - name: Setup GitFlow
+          uses: gittools/actions/gitversion/setup@v1.1.1
+          with:
+            versionSpec: '5.x'
+            
+        - name: Determine Version
+          uses: gittools/actions/gitversion/execute@v1.1.1
+        
+        - name: Build
+          run: dotnet build -c Release --no-restore /p:Version="${{ env.GitVersion_SemVer }}-alpha.${{ env.GitVersion_PreReleaseTag }}" /p:AssemblyVersion="${{ env.GitVersion_SemVer }}" /p:FileVersion="${{ env.GitVersion_SemVer }}"
+
+        - name: Pack the Nuget Packages
+          run: dotnet pack -c Release --no-build --no-restore --include-symbols --include-source --output nupkgs /p:PackageVersion="${{ env.GitVersion_SemVer }}-alpha.${{ env.GitVersion_PreReleaseTag }}" 
+
+        - name: Publish the Nuget Packages to the GitHub Package Registry
+          run: dotnet nuget push **/*.nupkg --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source "https://nuget.pkg.github.com/deveel/index.json"
+
+  clean:
+    name: Clean Pre-Release Packages
+    needs: publish
+    uses: ./.github/workflows/clean-packages.yml

@@ -1,0 +1,17 @@
+name: Clean Pre-Release Packages
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean Deveel.Results
+        uses: actions/delete-package-versions@v5
+        with: 
+          package-name: 'Deveel.Results'
+          package-type: 'nuget'
+          min-versions-to-keep: 10
+          delete-only-pre-release-versions: true

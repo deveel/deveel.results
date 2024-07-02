@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Deveel</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Title>Deveel Results</Title>
+    <Description>A simple and unambitious library to implement the result pattern in services.</Description>
+    <PackageTags>result;results;operation;pattern;error;domain;ddd;domain-driven</PackageTags>
+  </PropertyGroup>
+
+</Project>
