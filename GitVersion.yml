@@ -1,0 +1,37 @@
+mode: ContinuousDeployment
+branches:
+  main:
+    tag: ''
+    increment: Patch
+    regex: ^main$
+    source-branches: ['feature', 'release', 'hotfix']
+    prevent-increment-of-merged-branch-version: true
+    tracks-release-branches: true
+    is-release-branch: true
+  feature:
+    tag: useBranchName
+    increment: Inherit
+    regex: ^feature[-/]
+    source-branches: ['main']
+    tracks-release-branches: false
+    is-release-branch: false
+  release:
+    tag: rc
+    increment: None
+    regex: ^release[-/]
+    source-branches: ['main', 'feature']
+    tracks-release-branches: true
+    is-release-branch: true
+  hotfix:
+    tag: ''
+    increment: Patch
+    regex: ^hotfix[-/]
+    source-branches: ['main', 'release']
+    tracks-release-branches: false
+    is-release-branch: false
+ignore:
+  sha: []
+merge-message-formats: {}
+commit-message-incrementing: Enabled
+assembly-versioning-scheme: MajorMinorPatch
+continuous-delivery-fallback-tag: ci
