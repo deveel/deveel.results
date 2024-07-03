@@ -1,4 +1,6 @@
-﻿namespace Deveel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Deveel
 {
     public static class OperationResultOfTTests
     {
@@ -134,6 +136,25 @@
             Assert.Null(resultOfT.Error);
             Assert.Equal(default, resultOfT.Value);
 
+        }
+
+        [Fact]
+        public static void OperationResult_FailForValidation()
+        {
+            var validations = new[] {
+                new ValidationResult("err.1", new []{ "Member1" }),
+                new ValidationResult("err.2", new []{ "Member2" })
+            };
+
+            var result = OperationResult<int>.ValidationFailed("err.1", "biz", validations);
+
+            Assert.Equal(OperationResultType.Error, result.ResultType);
+            Assert.NotNull(result.Error);
+            Assert.Equal("err.1", result.Error.Code);
+            Assert.Equal("biz", result.Error.Domain);
+            var opError = Assert.IsType<OperationValidationError>(result.Error);
+
+            Assert.Equal(validations.Length, opError.ValidationResults.Count);
         }
 
         class DomainException : OperationException
