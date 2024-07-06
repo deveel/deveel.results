@@ -27,17 +27,6 @@ namespace Deveel
         public IOperationError? Error { get; }
 
         /// <summary>
-        /// A result of an operation that has not changed the state 
-        /// of an object.
-        /// </summary>
-        public static readonly OperationResult<T> NotChanged = new(OperationResultType.Unchanged, default, null);
-
-        /// <summary>
-        /// A result of an operation that has been cancelled.
-        /// </summary>
-        public static readonly OperationResult<T> Cancelled = new(OperationResultType.Cancelled, default, null);
-
-        /// <summary>
         /// Creates a new instance of an operation result that has succeeded
         /// with the given value.
         /// </summary>
@@ -49,6 +38,21 @@ namespace Deveel
         {
             return new OperationResult<T>(OperationResultType.Success, value, null);
         }
+
+        /// <summary>
+        /// Creates a new instance of an operation result that has caused
+        /// no change in the state of an object.
+        /// </summary>
+        /// <param name="value">
+        /// The value that represents the object that was attempted
+        /// to be changed.
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult{T}"/> that
+        /// represents an unchanged operation.
+        /// </returns>
+        public static OperationResult<T> NotChanged(T? value = default) 
+            => new(OperationResultType.Unchanged, value, null);
 
         /// <summary>
         /// Creates a new instance of an operation result that has failed
@@ -153,5 +157,19 @@ namespace Deveel
         /// </param>
         /// <seealso cref="Fail(IOperationError)"/>
         public static implicit operator OperationResult<T>(OperationException error) => Fail(error);
+
+        /// <summary>
+        /// Implicitly converts the result to is value
+        /// </summary>
+        /// <param name="result">
+        /// The operation result that encapsulates the value to convert to.
+        /// </param>
+        public static implicit operator T?(OperationResult<T> result)
+        {
+            if (result.IsError())
+                throw result.AsException()!;
+
+            return result.Value;
+        }
     }
 }

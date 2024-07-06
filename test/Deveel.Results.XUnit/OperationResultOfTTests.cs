@@ -35,20 +35,21 @@ namespace Deveel
         [Fact]
         public static void OperationResultOfT_NotChanged()
         {
-            var result = OperationResult<int>.NotChanged;
+            var result = OperationResult<int>.NotChanged();
             Assert.Equal(OperationResultType.Unchanged, result.ResultType);
             Assert.Null(result.Error);
             Assert.Equal(default, result.Value);
         }
 
         [Fact]
-        public static void OperationResultOfT_Cancelled()
+        public static void OperationResultOfT_WithValue_NotChanged()
         {
-            var result = OperationResult<int>.Cancelled;
-            Assert.Equal(OperationResultType.Cancelled, result.ResultType);
+            var result = OperationResult<int>.NotChanged(33);
+            Assert.Equal(OperationResultType.Unchanged, result.ResultType);
             Assert.Null(result.Error);
-            Assert.Equal(default, result.Value);
+            Assert.Equal(33, result.Value);
         }
+
 
         [Fact]
         public static void OperationResult_FailWithCode()
@@ -174,6 +175,132 @@ namespace Deveel
 
             Assert.Equal(validations.Length, opError.ValidationResults.Count);
         }
+
+        [Fact]
+        public static void OperationResult_Fail_AsException()
+        {
+            var error = new OperationError("err.1", "test", "An error has occurred");
+            var result = OperationResult<int>.Fail(error);
+
+            var ex = result.AsException();
+
+            Assert.True(result.IsError());
+            Assert.NotNull(ex);
+            Assert.Equal(error.Code, ex.ErrorCode);
+            Assert.Equal(error.Domain, ex.ErrorDomain);
+            Assert.Equal(error.Message, ex.Message);
+        }
+
+        [Fact]
+        public static void OperationResult_FailWithInnerError_AsException()
+        {
+            var inner = new OperationError("err.0", "test", "Because of this error");
+            var error = new OperationError("err.1", "test", "An error as occurred", inner);
+
+            var result = OperationResult<int>.Fail(error);
+
+            var ex = result.AsException();
+
+            Assert.NotNull(ex);
+
+            Assert.True(result.IsError());
+            Assert.False(result.HasValidationErrors());
+
+            Assert.Equal(error.Code, ex.ErrorCode);
+            Assert.Equal(error.Domain, ex.ErrorDomain);
+            Assert.Equal(error.Message, ex.Message);
+            Assert.NotNull(ex.InnerException);
+
+            var innerEx = Assert.IsType<OperationException>(ex.InnerException);
+
+            Assert.NotNull(innerEx);
+            Assert.Equal(inner.Code, innerEx.ErrorCode);
+            Assert.Equal(inner.Domain, innerEx.ErrorDomain);
+            Assert.Equal(inner.Message, innerEx.Message);
+            Assert.Null(innerEx.InnerException);
+        }
+
+        [Fact]
+        public static void OperationResult_Success_AsException()
+        {
+            var result = OperationResult<int>.Success(34);
+
+            var ex = result.AsException();
+
+            Assert.False(result.IsError());
+            Assert.Null(ex);
+        }
+
+        [Fact]
+        public static void OperationResult_SuccessWithResult_ImplicitConvert()
+        {
+            var result = OperationResult<int>.Success(42);
+
+            int value = result;
+
+            Assert.Equal(42, value);
+        }
+
+        [Fact]
+        public static void OperationResult_Fail_ImplicitConvert()
+        {
+            var result = OperationResult<int>.Fail("err.1", "test", "An error has occurred");
+
+            Assert.Throws<OperationException>(() => {
+                int value = result;
+            });
+        }
+
+        [Fact]
+        public static void Match_Success()
+        {
+            var result = OperationResult<int>.Success(42);
+            var value = result.Match(r => $"The result is {r}");
+            Assert.Equal("The result is 42", value);
+        }
+
+        [Fact]
+        public static void Match_Error()
+        {
+            var error = new OperationError("err.1", "biz");
+            var result = OperationResult<int>.Fail(error);
+            var value = result.Match(ifError: e => $"The error {e.Code} was generated in domain {e.Domain}");
+            Assert.Equal("The error err.1 was generated in domain biz", value);
+        }
+
+        [Fact]
+        public static void Match_Unchanged()
+        {
+            var result = OperationResult<int>.NotChanged(33);
+            var value = result.Match(x => 42, ifUnchanged: x => 0);
+            Assert.Equal(0, value);
+        }
+
+        [Fact]
+        public static async Task MatchAsync_Success()
+        {
+            var result = OperationResult<int>.Success(42);
+            var value = await result.MatchAsync(r => Task.FromResult<string>($"The result is {r}"));
+            Assert.Equal("The result is 42", value);
+        }
+
+        [Fact]
+        public static async Task MatchAsync_Error()
+        {
+            var error = new OperationError("err.1", "biz");
+            var result = OperationResult<int>.Fail(error);
+            var value = await result.MatchAsync(ifError: e => Task.FromResult($"The error {e.Code} was generated in domain {e.Domain}"));
+            Assert.Equal("The error err.1 was generated in domain biz", value);
+        }
+
+        [Fact]
+        public static async Task MatchAsync_Unchanged()
+        {
+            var result = OperationResult<int>.NotChanged(11);
+            var value = await result.MatchAsync(r => Task.FromResult(r), ifUnchanged: r => Task.FromResult(0));
+            Assert.Equal(0, value);
+        }
+
 
         class DomainException : OperationException
         {

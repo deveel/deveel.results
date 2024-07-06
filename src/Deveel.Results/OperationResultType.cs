@@ -23,11 +23,6 @@
         /// <summary>
         /// The operation caused no changes.
         /// </summary>
-        Unchanged = 3,
-
-        /// <summary>
-        /// The operation was cancelled.
-        /// </summary>
-        Cancelled = 4
+        Unchanged = 3
     }
 }
