@@ -201,4 +201,19 @@ public static class OperationResultTests
         Assert.True(result.HasValidationErrors());
         Assert.Equal(errors, result.ValidationResults());
     }
+
+    [Fact]
+    public static void OperationResult_Fail_WithValidationErrors()
+    {
+        var errors = new List<ValidationResult> {
+            new ValidationResult("The value is required", new[] { "value" }),
+            new ValidationResult("The value must be greater than 0", new[] { "value" })
+        };
+
+        var result = OperationResult.ValidationFailed("err.1", "biz", errors);
+
+        Assert.True(result.IsError());
+        Assert.True(result.HasValidationErrors());
+        Assert.Equal(errors, result.ValidationResults());
+    }
 }

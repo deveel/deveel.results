@@ -88,6 +88,33 @@ namespace Deveel
         public static IReadOnlyList<ValidationResult> ValidationResults(this IOperationResult result) 
             => result.HasValidationErrors() ? ((IValidationError)result.Error!).ValidationResults : Array.Empty<ValidationResult>();
 
+        /// <summary>
+        /// Attempts to match the operation result to a specific state
+        /// that can be handled by the caller.
+        /// </summary>
+        /// <typeparam name="TResult">
+        /// The type of the result that is returned by the match.
+        /// </typeparam>
+        /// <param name="result">
+        /// The operation result to match.
+        /// </param>
+        /// <param name="ifSuccess">
+        /// A function that is called when the operation result was a success.
+        /// </param>
+        /// <param name="ifError">
+        /// A function that is called when the operation result was an error.
+        /// </param>
+        /// <param name="ifUnchanged">
+        /// A function that is called when the operation result caused no changed
+        /// to the object.
+        /// </param>
+        /// <returns>
+        /// Returns the result of the function that was called based on the state
+        /// of the operation result.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the operation result is in an unknown state.
+        /// </exception>
         public static TResult Match<TResult>(this IOperationResult result, 
             Func<TResult>? ifSuccess = null, 
             Func<IOperationError?, TResult>? ifError = null, 
@@ -116,6 +143,33 @@ namespace Deveel
             throw new InvalidOperationException("The operation result is in an unknown state.");
         }
 
+        /// <summary>
+        /// Attempts to match the operation result to a specific state
+        /// that can be handled by the caller.
+        /// </summary>
+        /// <typeparam name="TResult">
+        /// The type of the result that is returned by the match.
+        /// </typeparam>
+        /// <param name="result">
+        /// The operation result to match.
+        /// </param>
+        /// <param name="ifSuccess">
+        /// A function that is called when the operation result was a success.
+        /// </param>
+        /// <param name="ifError">
+        /// A function that is called when the operation result was an error.
+        /// </param>
+        /// <param name="ifUnchanged">
+        /// A function that is called when the operation result caused no changed
+        /// to the object.
+        /// </param>
+        /// <returns>
+        /// Returns the result of the function that was called based on the state
+        /// of the operation result.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the operation result is in an unknown state.
+        /// </exception>
         public static Task<TResult> MatchAsync<TResult>(this IOperationResult result,
             Func<Task<TResult>>? ifSuccess = null,
             Func<IOperationError?, Task<TResult>>? ifError = null,

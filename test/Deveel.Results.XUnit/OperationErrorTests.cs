@@ -111,5 +111,27 @@ namespace Deveel
             Assert.Equal("biz", error.Domain);
             Assert.Same(results, error.ValidationResults);
         }
+
+        [Fact]
+        public static void OperationException_InnerExceptionIsOperationError()
+        {
+            var inner = new OperationException("err.2", "biz");
+            var exception = new OperationException("err.1", "biz", "An error has occurred", inner);
+
+            Assert.Equal("err.1", exception.ErrorCode);
+            Assert.Equal("biz", exception.ErrorDomain);
+            Assert.Equal("An error has occurred", exception.Message);
+            Assert.NotNull(exception.InnerException);
+
+            var error = Assert.IsAssignableFrom<IOperationError>(exception);
+            Assert.Equal("err.1", error.Code);
+            Assert.Equal("biz", error.Domain);
+            Assert.NotNull(error.InnerError);
+
+            Assert.NotNull(exception.InnerException);
+            var innerError = Assert.IsAssignableFrom<IOperationError>(exception.InnerException);
+            Assert.Equal("err.2", innerError.Code);
+            Assert.Equal("biz", innerError.Domain);
+        }
     }
 }
