@@ -27,11 +27,6 @@ namespace Deveel
         public IOperationError? Error { get; }
 
         /// <summary>
-        /// A result of an operation that has been cancelled.
-        /// </summary>
-        public static readonly OperationResult<T> Cancelled = new(OperationResultType.Cancelled, default, null);
-
-        /// <summary>
         /// Creates a new instance of an operation result that has succeeded
         /// with the given value.
         /// </summary>

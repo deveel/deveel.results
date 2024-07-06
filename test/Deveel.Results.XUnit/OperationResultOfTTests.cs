@@ -52,15 +52,6 @@ namespace Deveel
 
 
         [Fact]
-        public static void OperationResultOfT_Cancelled()
-        {
-            var result = OperationResult<int>.Cancelled;
-            Assert.Equal(OperationResultType.Cancelled, result.ResultType);
-            Assert.Null(result.Error);
-            Assert.Equal(default, result.Value);
-        }
-
-        [Fact]
         public static void OperationResult_FailWithCode()
         {
             var result = OperationResult<int>.Fail("err.1", "biz");

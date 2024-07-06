@@ -34,19 +34,6 @@ namespace Deveel
             => result.ResultType == OperationResultType.Error;
 
         /// <summary>
-        /// Determines if the operation result is cancelled.
-        /// </summary>
-        /// <param name="result">
-        /// The operation result to check.
-        /// </param>
-        /// <returns>
-        /// Returns <see langword="true"/> if the operation result is cancelled,
-        /// otherwise <see langword="false"/>.
-        /// </returns>
-        public static bool IsCancelled(this IOperationResult result)
-            => result.ResultType == OperationResultType.Cancelled;
-
-        /// <summary>
         /// Determines if the operation has caused no changes
         /// to the state of an object.
         /// </summary>

@@ -23,14 +23,6 @@ public static class OperationResultTests
     }
 
     [Fact]
-    public static void OperationResult_Cancelled()
-    {
-        var result = OperationResult.Cancelled;
-        Assert.Equal(OperationResultType.Cancelled, result.ResultType);
-        Assert.Null(result.Error);
-    }
-
-    [Fact]
     public static void OperationResult_Fail()
     {
         var error = new OperationError("err.1", "biz");
@@ -171,13 +163,6 @@ public static class OperationResultTests
         var error = new OperationError("err.1", "biz");
         var result = OperationResult.Fail(error);
         Assert.True(result.IsError());
-    }
-
-    [Fact]
-    public static void OperationResult_IsCancelled()
-    {
-        var result = OperationResult.Cancelled;
-        Assert.True(result.IsCancelled());
     }
 
     [Fact]

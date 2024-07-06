@@ -31,11 +31,6 @@ namespace Deveel
         public static readonly OperationResult NotChanged = new(OperationResultType.Unchanged, null);
 
         /// <summary>
-        /// The result of an operation that has been cancelled.
-        /// </summary>
-        public static readonly OperationResult Cancelled = new(OperationResultType.Cancelled, null);
-
-        /// <summary>
         /// Creates a new instance of an operation result that has failed.
         /// </summary>
         /// <param name="error">
