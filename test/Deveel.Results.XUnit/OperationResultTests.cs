@@ -216,4 +216,60 @@ public static class OperationResultTests
         Assert.True(result.HasValidationErrors());
         Assert.Equal(errors, result.ValidationResults());
     }
+
+    [Fact]
+    public static void OperationResult_Fail_AsException()
+    {
+        var error = new OperationError("err.1", "test", "An error has occurred");
+        var result = OperationResult.Fail(error);
+
+        var ex = result.AsException();
+
+        Assert.True(result.IsError());
+        Assert.NotNull(ex);
+        Assert.Equal(error.Code, ex.ErrorCode);
+        Assert.Equal(error.Domain, ex.ErrorDomain);
+        Assert.Equal(error.Message, ex.Message);
+    }
+
+    [Fact]
+    public static void OperationResult_FailWithInnerError_AsException()
+    {
+        var inner = new OperationError("err.0", "test", "Because of this error");
+        var error = new OperationError("err.1", "test", "An error as occurred", inner);
+
+        var result = OperationResult.Fail(error);
+
+        var ex = result.AsException();
+
+        Assert.NotNull(ex);
+
+        Assert.True(result.IsError());
+        Assert.False(result.HasValidationErrors());
+
+        Assert.Equal(error.Code, ex.ErrorCode);
+        Assert.Equal(error.Domain, ex.ErrorDomain);
+        Assert.Equal(error.Message, ex.Message);
+        Assert.NotNull(ex.InnerException);
+
+        var innerEx = Assert.IsType<OperationException>(ex.InnerException);
+
+        Assert.NotNull(innerEx);
+        Assert.Equal(inner.Code, innerEx.ErrorCode);
+        Assert.Equal(inner.Domain, innerEx.ErrorDomain);
+        Assert.Equal(inner.Message, innerEx.Message);
+        Assert.Null(innerEx.InnerException);
+    }
+
+    [Fact]
+    public static void OperationResult_Success_AsException()
+    {
+        var result = OperationResult.Success;
+
+        var ex = result.AsException();
+
+        Assert.False(result.IsError());
+        Assert.Null(ex);
+    }
+
 }
