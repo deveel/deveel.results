@@ -16,7 +16,7 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-          dotnet-version: [6.0.x,7.0.x,8.0.x]
+          dotnet-version: [6.0.x,7.0.x,8.0.x,9.0.x]
 
     steps:
       - name: Checkout Code
@@ -26,15 +26,31 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      
+
+      - name: Emit .NET 6.0 Framework Moniker
+        if: matrix.dotnet-version == '6.0.x'
+        run: echo "DOTNET_FX_VERSION=net6.0" >> $GITHUB_ENV
+
+      - name: Emit .NET 7.0 Framework Moniker
+        if: matrix.dotnet-version == '7.0.x'
+        run: echo "DOTNET_FX_VERSION=net7.0" >> $GITHUB_ENV
+
+      - name: Emit .NET 8.0 Framework Moniker
+        if: matrix.dotnet-version == '8.0.x'
+        run: echo "DOTNET_FX_VERSION=net8.0" >> $GITHUB_ENV
+
+      - name: Emit .NET 9.0 Framework Moniker
+        if: matrix.dotnet-version == '9.0.x'
+        run: echo "DOTNET_FX_VERSION=net9.0" >> $GITHUB_ENV
+
       - name: Install Dependencies
-        run: dotnet restore
+        run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore --nologo
+        run: dotnet build --configuration Release --no-restore --nologo -f ${{ env.DOTNET_FX_VERSION }}
 
       - name: Test
-        run: dotnet test --configuration Release --no-build --no-restore --verbosity normal
+        run: dotnet test --configuration Release --no-build --no-restore --verbosity normal -f ${{ env.DOTNET_FX_VERSION }}
 
   publish:
       name: Publish Package
@@ -49,7 +65,7 @@ jobs:
         - name: Setup .NET
           uses: actions/setup-dotnet@v4
           with:
-            dotnet-version: 8.0.x
+            dotnet-version: 9.0.x
 
         - name: Install Dependencies
           run: dotnet restore
