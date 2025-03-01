@@ -44,7 +44,7 @@ jobs:
         run: echo "DOTNET_FX_VERSION=net9.0" >> $GITHUB_ENV
 
       - name: Install Dependencies
-        run: dotnet restore 
+        run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
 
       - name: Build
         run: dotnet build --configuration Release --no-restore --nologo -f ${{ env.DOTNET_FX_VERSION }}

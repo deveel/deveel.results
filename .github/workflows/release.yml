@@ -47,7 +47,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
 
     - name: Build
       run: dotnet build -c Release --no-restore -f ${{ env.DOTNET_FX_VERSION }}
