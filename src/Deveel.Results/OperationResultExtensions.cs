@@ -20,17 +20,33 @@ namespace Deveel
         public static bool IsSuccess(this IOperationResult result) 
             => result.ResultType == OperationResultType.Success;
 
-        /// <summary>
-        /// Determines if the operation result is an error.
-        /// </summary>
-        /// <param name="result">
-        /// The operation result to check.
-        /// </param>
-        /// <returns>
-        /// Returns <see langword="true"/> if the operation result is an error,
-        /// otherwise <see langword="false"/>.
-        /// </returns>
-        public static bool IsError(this IOperationResult result)
+		/// <summary>
+		/// Determines if the operation result is a success and has a value.
+		/// </summary>
+		/// <typeparam name="T">
+		/// The type of the value that is expected to be returned by the operation.
+		/// </typeparam>
+		/// <param name="result">
+		/// The operation result to check.
+		/// </param>
+		/// <returns>
+		/// Returns <see langword="true"/> if the operation result is a success
+		/// and the value is not <see langword="null"/>, otherwise <see langword="false"/>.
+		/// </returns>
+		public static bool HasValue<T>(this IOperationResult<T> result)
+			=> result.IsSuccess() && result.Value is not null;
+
+		/// <summary>
+		/// Determines if the operation result is an error.
+		/// </summary>
+		/// <param name="result">
+		/// The operation result to check.
+		/// </param>
+		/// <returns>
+		/// Returns <see langword="true"/> if the operation result is an error,
+		/// otherwise <see langword="false"/>.
+		/// </returns>
+		public static bool IsError(this IOperationResult result)
             => result.ResultType == OperationResultType.Error;
 
         /// <summary>

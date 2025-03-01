@@ -133,5 +133,74 @@ namespace Deveel
             Assert.Equal("err.2", innerError.Code);
             Assert.Equal("biz", innerError.Domain);
         }
-    }
+
+		[Fact]
+        public static void ValidationError_WithNullCode()
+		{
+			Assert.Throws<ArgumentNullException>(() => new OperationValidationError(null, "biz", Array.Empty<ValidationResult>()));
+		}
+
+		[Fact]
+		public static void ValidationError_WithNullDomain()
+		{
+			Assert.Throws<ArgumentNullException>(() => new OperationValidationError("err.1", null, Array.Empty<ValidationResult>()));
+		}
+
+		[Fact]
+		public static void ValidationError_WithNullResults()
+		{
+			Assert.Throws<ArgumentNullException>(() => new OperationValidationError("err.1", "biz", null));
+		}
+
+		[Fact]
+        public static void ValidationError_WithResults_GetMemberErrors()
+        {
+            var results = new[] {
+				new ValidationResult("First error of the validation", new []{ "Member1" }),
+				new ValidationResult("Second error of the validation", new []{"Member2"})
+			};
+
+			var error = new OperationValidationError("err.1", "biz", results);
+			var memberErrors = error.GetMemberErrors();
+			Assert.NotNull(memberErrors);
+			Assert.Equal(2, memberErrors.Count);
+			Assert.True(memberErrors.TryGetValue("Member1", out var member1Errors));
+			Assert.NotNull(member1Errors);
+			Assert.Equal(1, member1Errors.Length);
+			Assert.Equal("First error of the validation", member1Errors[0]);
+			Assert.True(memberErrors.TryGetValue("Member2", out var member2Errors));
+			Assert.NotNull(member2Errors);
+			Assert.Equal(1, member2Errors.Length);
+			Assert.Equal("Second error of the validation", member2Errors[0]);
+		}
+
+		[Fact]
+		public static void ValidationError_WithResults_GetMemberErrors_Empty()
+		{
+			var error = new OperationValidationError("err.1", "biz", Array.Empty<ValidationResult>());
+			var memberErrors = error.GetMemberErrors();
+			Assert.NotNull(memberErrors);
+			Assert.Empty(memberErrors);
+		}
+
+        [Fact]
+        public static void ValidationError_WithResultsForSameMember()
+        {
+			var results = new[] {
+				new ValidationResult("First error of the validation", new []{ "Member" }),
+				new ValidationResult("Second error of the validation", new []{"Member"})
+			};
+
+			var error = new OperationValidationError("err.1", "biz", results);
+			var memberErrors = error.GetMemberErrors();
+
+			Assert.NotNull(memberErrors);
+			Assert.Single(memberErrors);
+			Assert.True(memberErrors.TryGetValue("Member", out var memberErrorsList));
+			Assert.NotNull(memberErrorsList);
+			Assert.Equal(2, memberErrorsList.Length);
+			Assert.Equal("First error of the validation", memberErrorsList[0]);
+			Assert.Equal("Second error of the validation", memberErrorsList[1]);
+		}
+	}
 }
