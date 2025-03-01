@@ -85,7 +85,7 @@ jobs:
       run: dotnet pack -c Release --no-build --no-restore --output ./pkgs --version-suffix ${{ env.VERSION }} --include-symbols
 
     - name: Publish to GitHub Packages
-      run: dotnet nuget push ./pkgs/*.nupkg --source https://nuget.pkg.github.com/deveel/index.json --api-key ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push ./pkgs/*.nupkg --source https://nuget.pkg.github.com/deveel/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
 
     - name: Publish to NuGet
-      run: dotnet nuget push ./pkgs/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+      run: dotnet nuget push ./pkgs/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
