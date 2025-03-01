@@ -28,19 +28,19 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: Emit .NET 6.0 Framework Moniker
-        if: matrix.dotnet == '6.0.x'
+        if: matrix.dotnet-version == '6.0.x'
         run: echo "DOTNET_FX_VERSION=net6.0" >> $GITHUB_ENV
 
       - name: Emit .NET 7.0 Framework Moniker
-        if: matrix.dotnet == '7.0.x'
+        if: matrix.dotnet-version == '7.0.x'
         run: echo "DOTNET_FX_VERSION=net7.0" >> $GITHUB_ENV
 
       - name: Emit .NET 8.0 Framework Moniker
-        if: matrix.dotnet == '8.0.x'
+        if: matrix.dotnet-version == '8.0.x'
         run: echo "DOTNET_FX_VERSION=net8.0" >> $GITHUB_ENV
 
       - name: Emit .NET 9.0 Framework Moniker
-        if: matrix.dotnet == '9.0.x'
+        if: matrix.dotnet-version == '9.0.x'
         run: echo "DOTNET_FX_VERSION=net9.0" >> $GITHUB_ENV
 
       - name: Install Dependencies
