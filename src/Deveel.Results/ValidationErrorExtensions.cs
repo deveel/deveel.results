@@ -17,7 +17,7 @@
 		/// </returns>
 		public static IDictionary<string, string[]> GetMemberErrors(this IValidationError error)
 		{
-			ArgumentNullException.ThrowIfNull(error, nameof(error));
+			Check.ThrowIfNull(error, nameof(error));
 
 			var results = new Dictionary<string, List<string>>();
 

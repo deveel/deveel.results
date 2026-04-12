@@ -4,7 +4,7 @@
     /// Represents the result of an operation that
     /// has a value returned.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of the value returned by the operation.</typeparam>
     public interface IOperationResult<T> : IOperationResult
     {
         /// <summary>

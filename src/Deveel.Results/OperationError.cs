@@ -28,8 +28,8 @@
         /// </exception>
         public OperationError(string code, string domain, string? message = null, IOperationError? innerError = null)
         {
-            ArgumentNullException.ThrowIfNull(code, nameof(code));
-            ArgumentNullException.ThrowIfNull(domain, nameof(domain));
+            Check.ThrowIfNull(code, nameof(code));
+            Check.ThrowIfNull(domain, nameof(domain));
 
             Code = code;
             Domain = domain;

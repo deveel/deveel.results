@@ -83,8 +83,8 @@ namespace Deveel
 
         private void SetErrorDetails(string errorCode, string errorDomain)
         {
-            ArgumentNullException.ThrowIfNull(errorCode, nameof(errorCode));
-            ArgumentNullException.ThrowIfNull(errorDomain, nameof(errorDomain));
+            Check.ThrowIfNull(errorCode, nameof(errorCode));
+            Check.ThrowIfNull(errorDomain, nameof(errorDomain));
 
             ErrorCode = errorCode;
             ErrorDomain = errorDomain;

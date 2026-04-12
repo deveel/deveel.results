@@ -1,44 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <RootNamespace>Deveel</RootNamespace>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Antonello Provenzano</Authors>
-    <Company>Deveel</Company>
-    <Copyright>2024-2025 (C) Antonello Provenzano</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Title>Deveel Results</Title>
     <Description>A simple and unambitious library to implement the result pattern in services.</Description>
     <PackageTags>result;results;operation;pattern;error;domain;ddd;domain-driven</PackageTags>
-    <RepositoryUrl>https://github.com/deveel/deveel.results</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageIcon>deveel-logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" Condition="'$(TargetFramework)' != 'net8.0'"/>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" Condition="'$(TargetFramework)' == 'net8.0'"/>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-  </PropertyGroup>
-
   <ItemGroup>
-    <None Include="..\..\deveel-logo.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="..\..\mit.licenseheader">
-      <Pack>False</Pack>
-    </None>
+    <Folder Include="obj\" />
   </ItemGroup>
 </Project>

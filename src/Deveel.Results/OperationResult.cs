@@ -42,7 +42,7 @@ namespace Deveel
         /// </returns>
         public static OperationResult Fail(IOperationError error)
         {
-            ArgumentNullException.ThrowIfNull(error, nameof(error));
+            Check.ThrowIfNull(error, nameof(error));
             return new OperationResult(OperationResultType.Error, error);
         }
 

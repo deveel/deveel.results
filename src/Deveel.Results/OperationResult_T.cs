@@ -33,7 +33,10 @@ namespace Deveel
         /// <param name="value">
         /// A value that represents the result of the operation.
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult{T}"/> that
+        /// represents a successful operation with the given value.
+        /// </returns>
         public static OperationResult<T> Success(T? value)
         {
             return new OperationResult<T>(OperationResultType.Success, value, null);
@@ -70,7 +73,7 @@ namespace Deveel
         /// </exception>
         public static OperationResult<T> Fail(IOperationError error)
         {
-            ArgumentNullException.ThrowIfNull(error, nameof(error));
+            Check.ThrowIfNull(error, nameof(error));
             return new OperationResult<T>(OperationResultType.Error, default, error);
         }
 
@@ -96,8 +99,8 @@ namespace Deveel
         /// </returns>
         public static OperationResult<T> Fail(string code, string domain, string? message = null, IOperationError? inner = null)
         {
-            ArgumentNullException.ThrowIfNull(code, nameof(code));
-            ArgumentNullException.ThrowIfNull(domain, nameof(domain));
+            Check.ThrowIfNull(code, nameof(code));
+            Check.ThrowIfNull(domain, nameof(domain));
             return new OperationResult<T>(OperationResultType.Error, default, new OperationError(code, domain, message, inner));
         }
 
@@ -159,7 +162,7 @@ namespace Deveel
         public static implicit operator OperationResult<T>(OperationException error) => Fail(error);
 
         /// <summary>
-        /// Implicitly converts the result to is value
+        /// Implicitly converts the result to its value
         /// </summary>
         /// <param name="result">
         /// The operation result that encapsulates the value to convert to.

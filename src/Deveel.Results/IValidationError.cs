@@ -4,7 +4,7 @@ namespace Deveel
 {
     /// <summary>
     /// Represents an error that occurred while validating a
-    /// a command or operation.
+    /// command or operation.
     /// </summary>
     public interface IValidationError : IOperationError
     {
