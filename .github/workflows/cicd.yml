@@ -20,10 +20,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup .NET ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
 
@@ -43,7 +43,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore --nologo -f ${{ env.DOTNET_FX_VERSION }}
+        run: dotnet build --configuration Release --no-restore --nologo
 
       - name: Test
         run: dotnet test --configuration Release --no-build --no-restore --verbosity normal -f ${{ env.DOTNET_FX_VERSION }}
@@ -54,12 +54,12 @@ jobs:
       needs: build
       steps:
         - name: Checkout Code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
           with:
             fetch-depth: 0
 
         - name: Setup .NET 10
-          uses: actions/setup-dotnet@v4
+          uses: actions/setup-dotnet@v5
           with:
             dotnet-version: 10.0.x
 
