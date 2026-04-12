@@ -63,13 +63,8 @@ jobs:
           with:
             dotnet-version: 10.0.x
 
-        - name: Setup .NET Standard 2.0
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: netstandard2.0
-
         - name: Install Dependencies
-          run: dotnet restore
+          run: dotnet restore -p:TargetFrameworks="net8.0;net9.0;net10.0;netstandard2.0"
 
         - name: Setup GitFlow
           uses: gittools/actions/gitversion/setup@v1.1.1
