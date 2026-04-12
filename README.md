@@ -1,5 +1,11 @@
 # deveel.results
 
+[![NuGet](https://img.shields.io/nuget/v/Deveel.Results.svg?style=flat-square)](https://www.nuget.org/packages/Deveel.Results/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Deveel.Results.svg?style=flat-square)](https://www.nuget.org/packages/Deveel.Results/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue.svg?style=flat-square)](https://github.com/deveel/deveel.results)
+[![.NET](https://img.shields.io/badge/.NET-8.0%2B-blue.svg?style=flat-square)](https://github.com/deveel/deveel.results)
+
 A simple, unambitious library to implement the Result Pattern in .NET
 
 ## Overview
