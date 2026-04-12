@@ -36,7 +36,7 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build -c Release --no-restore -f ${{ env.DOTNET_FX_VERSION }}
+      run: dotnet build -c Release --no-restore
 
     - name: Test
       run: dotnet test -c Release --no-build --no-restore -f ${{ env.DOTNET_FX_VERSION }}
