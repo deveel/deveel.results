@@ -10,19 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [6.0.x, 7.0.x, 8.0.x,9.0.x]
+        dotnet-version: [8.0.x,9.0.x, 10.0.x]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       
-    - name: Emit .NET 6.0 Framework Moniker
-      if: matrix.dotnet-version == '6.0.x'
-      run: echo "DOTNET_FX_VERSION=net6.0" >> $GITHUB_ENV
-
-    - name: Emit .NET 7.0 Framework Moniker
-      if: matrix.dotnet-version == '7.0.x'
-      run: echo "DOTNET_FX_VERSION=net7.0" >> $GITHUB_ENV
-
     - name: Emit .NET 8.0 Framework Moniker
       if: matrix.dotnet-version == '8.0.x'
       run: echo "DOTNET_FX_VERSION=net8.0" >> $GITHUB_ENV
@@ -31,16 +23,20 @@ jobs:
       if: matrix.dotnet-version == '9.0.x'
       run: echo "DOTNET_FX_VERSION=net9.0" >> $GITHUB_ENV
 
+    - name: Emit .NET 10.0 Framework Moniker
+      if: matrix.dotnet-version == '10.0.x'
+      run: echo "DOTNET_FX_VERSION=net10.0" >> $GITHUB_ENV
+      
     - name: Setup .NET ${{ matrix.dotnet-version }}
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Install dependencies
-      run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
+      run: dotnet restore
 
     - name: Build
-      run: dotnet build -c Release --no-restore -f ${{ env.DOTNET_FX_VERSION }}
+      run: dotnet build -c Release --no-restore
 
     - name: Test
       run: dotnet test -c Release --no-build --no-restore -f ${{ env.DOTNET_FX_VERSION }}

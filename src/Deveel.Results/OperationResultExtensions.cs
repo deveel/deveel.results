@@ -108,7 +108,7 @@ namespace Deveel
         /// A function that is called when the operation result was an error.
         /// </param>
         /// <param name="ifUnchanged">
-        /// A function that is called when the operation result caused no changed
+        /// A function that is called when the operation result caused no changes
         /// to the object.
         /// </param>
         /// <returns>
@@ -123,23 +123,23 @@ namespace Deveel
             Func<IOperationError?, TResult>? ifError = null, 
             Func<TResult>? ifUnchanged = null)
         {
-            ArgumentNullException.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(result, nameof(result));
 
             if (result.IsSuccess())
             {
-                ArgumentNullException.ThrowIfNull(ifSuccess, nameof(ifSuccess));
+                Check.ThrowIfNull(ifSuccess, nameof(ifSuccess));
                 return ifSuccess();
             }
 
             if (result.IsError())
             {
-                ArgumentNullException.ThrowIfNull(ifError, nameof(ifError));
+                Check.ThrowIfNull(ifError, nameof(ifError));
                 return ifError(result.Error);
             }
 
             if (result.IsUnchanged())
             {
-                ArgumentNullException.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
+                Check.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
                 return ifUnchanged();
             }
 
@@ -163,7 +163,7 @@ namespace Deveel
         /// A function that is called when the operation result was an error.
         /// </param>
         /// <param name="ifUnchanged">
-        /// A function that is called when the operation result caused no changed
+        /// A function that is called when the operation result caused no changes
         /// to the object.
         /// </param>
         /// <returns>
@@ -178,23 +178,23 @@ namespace Deveel
             Func<IOperationError?, Task<TResult>>? ifError = null,
             Func<Task<TResult>>? ifUnchanged = null)
         {
-            ArgumentNullException.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(result, nameof(result));
 
             if (result.IsSuccess())
             {
-                ArgumentNullException.ThrowIfNull(ifSuccess, nameof(ifSuccess));
+                Check.ThrowIfNull(ifSuccess, nameof(ifSuccess));
                 return ifSuccess();
             }
 
             if (result.IsError())
             {
-                ArgumentNullException.ThrowIfNull(ifError, nameof(ifError));
+                Check.ThrowIfNull(ifError, nameof(ifError));
                 return ifError(result.Error);
             }
 
             if (result.IsUnchanged())
             {
-                ArgumentNullException.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
+                Check.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
                 return ifUnchanged();
             }
 
@@ -205,6 +205,9 @@ namespace Deveel
         /// Attempts to match the operation result to a specific state
         /// that can be handled by the caller.
         /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value that is expected to be returned by the operation.
+        /// </typeparam>
         /// <typeparam name="TResult">
         /// The type of the result that is returned by the match.
         /// </typeparam>
@@ -218,7 +221,7 @@ namespace Deveel
         /// A function that is called when the operation result was an error.
         /// </param>
         /// <param name="ifUnchanged">
-        /// A function that is called when the operation result caused no changed
+        /// A function that is called when the operation result caused no changes
         /// to the object.
         /// </param>
         /// <returns>
@@ -233,23 +236,23 @@ namespace Deveel
             Func<IOperationError?, TResult>? ifError = null,
             Func<T?, TResult>? ifUnchanged = null)
         {
-            ArgumentNullException.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(result, nameof(result));
 
             if (result.IsSuccess())
             {
-                ArgumentNullException.ThrowIfNull(ifSuccess, nameof(ifSuccess));
+                Check.ThrowIfNull(ifSuccess, nameof(ifSuccess));
                 return ifSuccess(result.Value);
             }
 
             if (result.IsError())
             {
-                ArgumentNullException.ThrowIfNull(ifError, nameof(ifError));
+                Check.ThrowIfNull(ifError, nameof(ifError));
                 return ifError(result.Error);
             }
 
             if (result.IsUnchanged())
             {
-                ArgumentNullException.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
+                Check.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
                 return ifUnchanged(result.Value);
             }
 
@@ -260,6 +263,9 @@ namespace Deveel
         /// Attempts to match the operation result to a specific state
         /// that can be handled by the caller.
         /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value that is expected to be returned by the operation.
+        /// </typeparam>
         /// <typeparam name="TResult">
         /// The type of the result that is returned by the match.
         /// </typeparam>
@@ -273,7 +279,7 @@ namespace Deveel
         /// A function that is called when the operation result was an error.
         /// </param>
         /// <param name="ifUnchanged">
-        /// A function that is called when the operation result caused no changed
+        /// A function that is called when the operation result caused no changes
         /// to the object.
         /// </param>
         /// <returns>
@@ -288,23 +294,23 @@ namespace Deveel
             Func<IOperationError?, Task<TResult>>? ifError = null,
             Func<T?, Task<TResult>>? ifUnchanged = null)
         {
-            ArgumentNullException.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(result, nameof(result));
 
             if (result.IsSuccess())
             {
-                ArgumentNullException.ThrowIfNull(ifSuccess, nameof(ifSuccess));
+                Check.ThrowIfNull(ifSuccess, nameof(ifSuccess));
                 return ifSuccess(result.Value);
             }
 
             if (result.IsError())
             {
-                ArgumentNullException.ThrowIfNull(ifError, nameof(ifError));
+                Check.ThrowIfNull(ifError, nameof(ifError));
                 return ifError(result.Error);
             }
 
             if (result.IsUnchanged())
             {
-                ArgumentNullException.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
+                Check.ThrowIfNull(ifUnchanged, nameof(ifUnchanged));
                 return ifUnchanged(result.Value);
             }
 
@@ -316,8 +322,13 @@ namespace Deveel
         /// <summary>
         /// Converts an error result to an exception.
         /// </summary>
-        /// <param name="result"></param>
-        /// <returns></returns>
+        /// <param name="result">
+        /// The operation result to convert to an exception.
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationException"/> if the result is an error,
+        /// otherwise <see langword="null"/>.
+        /// </returns>
         public static OperationException? AsException(this IOperationResult result)
         {
             if (!result.IsError() || result.Error == null)

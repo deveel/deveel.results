@@ -15,3 +15,11 @@ jobs:
           package-type: 'nuget'
           min-versions-to-keep: 10
           delete-only-pre-release-versions: true
+
+      - name: Clean Deveel.Results AspNetCore MVC
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'Deveel.Results.AspNetCore.Mvc'
+          package-type: 'nuget'
+          min-versions-to-keep: 10
+          delete-only-pre-release-versions: true

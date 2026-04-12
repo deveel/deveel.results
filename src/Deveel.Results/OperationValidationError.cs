@@ -23,9 +23,9 @@ namespace Deveel
         /// </param>
         public OperationValidationError(string code, string domain, IReadOnlyList<ValidationResult> validationResults)
         {
-            ArgumentNullException.ThrowIfNull(code, nameof(code));
-            ArgumentNullException.ThrowIfNull(domain, nameof(domain));
-            ArgumentNullException.ThrowIfNull(validationResults, nameof(validationResults));
+            Check.ThrowIfNull(code, nameof(code));
+            Check.ThrowIfNull(domain, nameof(domain));
+            Check.ThrowIfNull(validationResults, nameof(validationResults));
 
             Code = code;
             Domain = domain;

@@ -21,7 +21,7 @@
         /// </exception>
         public static OperationException AsException(this IOperationError error)
         {
-            ArgumentNullException.ThrowIfNull(error, nameof(error));
+            Check.ThrowIfNull(error, nameof(error));
             return new OperationException(error.Code, error.Domain, error.Message, error.InnerError?.AsException());
         }
     }
