@@ -23,22 +23,17 @@ jobs:
       if: matrix.dotnet-version == '9.0.x'
       run: echo "DOTNET_FX_VERSION=net9.0" >> $GITHUB_ENV
 
-    - name: Emit .NET 9.0 Framework Moniker
+    - name: Emit .NET 10.0 Framework Moniker
       if: matrix.dotnet-version == '10.0.x'
       run: echo "DOTNET_FX_VERSION=net10.0" >> $GITHUB_ENV
       
-    - name: Setup .NET Standard 2.0
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: netstandard2.0
-
     - name: Setup .NET ${{ matrix.dotnet-version }}
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Install dependencies
-      run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
+      run: dotnet restore -p:TargetFrameworks="${{ env.DOTNET_FX_VERSION }};netstandard2.0"
 
     - name: Build
       run: dotnet build -c Release --no-restore -f ${{ env.DOTNET_FX_VERSION }}

@@ -41,13 +41,8 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Setup .NET Standard 2.0
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: netstandard2.0
-
     - name: Install dependencies
-      run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
+      run: dotnet restore -p:TargetFrameworks="${{ env.DOTNET_FX_VERSION }};netstandard2.0"
 
     - name: Build
       run: dotnet build -c Release --no-restore -f ${{ env.DOTNET_FX_VERSION }}
@@ -69,13 +64,8 @@ jobs:
       with:
         dotnet-version: 10.0.x
         
-    - name: Setup .NET Standard 2.0
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: netstandard2.0
-
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore -p:TargetFrameworks="net10.0;netstandard2.0"
 
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v1.1.1
