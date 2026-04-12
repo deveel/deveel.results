@@ -32,13 +32,8 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Setup .NET 2
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 2.0.x
-
     - name: Install dependencies
-      run: dotnet restore -p:TargetFrameworks=${{ env.DOTNET_FX_VERSION }}
+      run: dotnet restore
 
     - name: Build
       run: dotnet build -c Release --no-restore -f ${{ env.DOTNET_FX_VERSION }}
