@@ -2,6 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/v/Deveel.Results.svg?style=flat-square)](https://www.nuget.org/packages/Deveel.Results/)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Deveel.Results.svg?style=flat-square)](https://www.nuget.org/packages/Deveel.Results/)
+[![codecov](https://codecov.io/gh/deveel/deveel.results/graph/badge.svg?token=OA6NVUTSCB)](https://codecov.io/gh/deveel/deveel.results)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
 [![.NET Standard](https://img.shields.io/badge/.NET%20Standard-2.0-blue.svg?style=flat-square)](https://github.com/deveel/deveel.results)
 [![.NET](https://img.shields.io/badge/.NET-8.0%2B-blue.svg?style=flat-square)](https://github.com/deveel/deveel.results)
