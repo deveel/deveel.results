@@ -90,7 +90,442 @@ namespace Deveel
         /// </returns>
         public static IReadOnlyList<ValidationResult> ValidationResults(this IOperationResult result) 
             => result.HasValidationErrors() ? ((IValidationError)result.Error!).ValidationResults : Array.Empty<ValidationResult>();
+        
+        
+        /// <summary>
+        /// Executes the given function if the operation result is a success,
+        /// binding the result of the function to the current result chain.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to evaluate.
+        /// </param>
+        /// <param name="func">
+        /// A function to invoke when the operation result is a success.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IOperationResult"/> produced by <paramref name="func"/>
+        /// if the current result is a success; otherwise returns the current (failed) result.
+        /// If an exception implementing <see cref="IOperationError"/> is thrown it is wrapped
+        /// in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static IOperationResult Bind(this IOperationResult result, Func<IOperationResult> func)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(func, nameof(func));
 
+            try
+            {
+                if (result.IsSuccess())
+                    return func();
+
+                return result;
+            }
+            catch (Exception ex) when (ex is IOperationError)
+            {
+                return OperationResult.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Asynchronously executes the given function if the operation result is a success,
+        /// binding the result of the function to the current result chain.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to evaluate.
+        /// </param>
+        /// <param name="func">
+        /// An asynchronous function to invoke when the operation result is a success.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="Task{TResult}"/> that resolves to the <see cref="IOperationResult"/>
+        /// produced by <paramref name="func"/> if the current result is a success; otherwise
+        /// resolves to the current (failed) result.
+        /// If an exception implementing <see cref="IOperationError"/> is thrown it is wrapped
+        /// in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static async Task<IOperationResult> BindAsync(this IOperationResult result, Func<Task<IOperationResult>> func)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(func, nameof(func));
+
+            try
+            {
+                if (result.IsSuccess())
+                    return await func().ConfigureAwait(false);
+
+                return result;
+            }
+            catch (Exception ex) when (ex is IOperationError)
+            {
+                return OperationResult.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Executes the given function if the operation result is a success,
+        /// binding the typed result of the function to the current result chain.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value that is expected to be returned by the next operation.
+        /// </typeparam>
+        /// <param name="result">
+        /// The operation result to evaluate.
+        /// </param>
+        /// <param name="func">
+        /// A function to invoke when the operation result is a success.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IOperationResult{T}"/> produced by <paramref name="func"/>
+        /// if the current result is a success; otherwise returns a failed <see cref="IOperationResult{T}"/>
+        /// carrying the original error.
+        /// If an exception implementing <see cref="IOperationError"/> is thrown it is wrapped
+        /// in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static IOperationResult<T> Bind<T>(this IOperationResult result, Func<IOperationResult<T>> func)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(func, nameof(func));
+
+            try
+            {
+                if (result.IsSuccess())
+                    return func();
+
+                return OperationResult<T>.Fail(result.Error!);
+            }
+            catch (Exception ex) when (ex is IOperationError)
+            {
+                return OperationResult<T>.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<T>.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Asynchronously executes the given function if the operation result is a success,
+        /// binding the typed result of the function to the current result chain.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value that is expected to be returned by the next operation.
+        /// </typeparam>
+        /// <param name="result">
+        /// The operation result to evaluate.
+        /// </param>
+        /// <param name="func">
+        /// An asynchronous function to invoke when the operation result is a success.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="Task{TResult}"/> that resolves to the <see cref="IOperationResult{T}"/>
+        /// produced by <paramref name="func"/> if the current result is a success; otherwise resolves to
+        /// a failed <see cref="IOperationResult{T}"/> carrying the original error.
+        /// If an exception implementing <see cref="IOperationError"/> is thrown it is wrapped
+        /// in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static async Task<IOperationResult<T>> BindAsync<T>(this IOperationResult result, Func<Task<IOperationResult<T>>> func)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(func, nameof(func));
+
+            try
+            {
+                if (result.IsSuccess())
+                    return await func().ConfigureAwait(false);
+
+                return OperationResult<T>.Fail(result.Error!);
+            }
+            catch (Exception ex) when (ex is IOperationError)
+            {
+                return OperationResult<T>.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<T>.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Executes the given function with the value carried by the operation result
+        /// if the result is a success, binding the outcome to the current result chain.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value carried by the operation result.
+        /// </typeparam>
+        /// <param name="result">
+        /// The typed operation result to evaluate.
+        /// </param>
+        /// <param name="func">
+        /// A function that receives the value of the current result and produces
+        /// the next <see cref="IOperationResult"/> in the chain.
+        /// </param>
+        /// <returns>
+        /// Returns the <see cref="IOperationResult"/> produced by <paramref name="func"/>
+        /// if the current result is a success; otherwise returns the current (failed) result.
+        /// If an exception implementing <see cref="IOperationError"/> is thrown it is wrapped
+        /// in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static IOperationResult Bind<T>(this IOperationResult<T> result, Func<T?, IOperationResult> func)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(func, nameof(func));
+
+            try
+            {
+                if (result.IsSuccess())
+                    return func(result.Value);
+
+                return result;
+            }
+            catch (Exception ex) when (ex is IOperationError)
+            {
+                return OperationResult.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Asynchronously executes the given function with the value carried by the operation result
+        /// if the result is a success, binding the outcome to the current result chain.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value carried by the operation result.
+        /// </typeparam>
+        /// <param name="result">
+        /// The typed operation result to evaluate.
+        /// </param>
+        /// <param name="func">
+        /// An asynchronous function that receives the value of the current result and produces
+        /// the next <see cref="IOperationResult"/> in the chain.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="Task{TResult}"/> that resolves to the <see cref="IOperationResult"/>
+        /// produced by <paramref name="func"/> if the current result is a success; otherwise resolves
+        /// to the current (failed) result.
+        /// If an exception implementing <see cref="IOperationError"/> is thrown it is wrapped
+        /// in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static async Task<IOperationResult> BindAsync<T>(this IOperationResult<T> result, Func<T?, Task<IOperationResult>> func)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(func, nameof(func));
+
+            try
+            {
+                if (result.IsSuccess())
+                    return await func(result.Value).ConfigureAwait(false);
+
+                return result;
+            }
+            catch (Exception ex) when (ex is IOperationError)
+            {
+                return OperationResult.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Executes a side-effect action on the operation result without altering the result,
+        /// and then returns the same result.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to pass to the action.
+        /// </param>
+        /// <param name="action">
+        /// An action to invoke with the current operation result, regardless of its state.
+        /// </param>
+        /// <returns>
+        /// Returns the same <see cref="IOperationResult"/> that was passed in, allowing further
+        /// chaining. If the action throws an exception implementing <see cref="IOperationError"/>
+        /// it is wrapped in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static IOperationResult Tap(this IOperationResult result, Action<IOperationResult> action)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(action, nameof(action));
+
+            try
+            {
+                action(result);
+                return result;
+            }
+            catch (Exception ex) when(ex is IOperationError)
+            {
+                return OperationResult.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Asynchronously executes a side-effect action on the operation result without altering
+        /// the result, and then returns the same result.
+        /// </summary>
+        /// <param name="result">
+        /// The operation result to pass to the action.
+        /// </param>
+        /// <param name="action">
+        /// An asynchronous action to invoke with the current operation result, regardless of its state.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="Task{TResult}"/> that resolves to the same <see cref="IOperationResult"/>
+        /// that was passed in, allowing further chaining. If the action throws an exception implementing
+        /// <see cref="IOperationError"/> it is wrapped in a failed result; any other unhandled exception
+        /// is also wrapped as a failure.
+        /// </returns>
+        public static async Task<IOperationResult> TapAsync(this IOperationResult result, Func<IOperationResult, Task> action)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(action, nameof(action));
+
+            try
+            {
+                await action(result).ConfigureAwait(false);
+                return result;
+            }
+            catch (Exception ex) when(ex is IOperationError)
+            {
+                return OperationResult.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Executes a side-effect action on the typed operation result without altering the result,
+        /// and then returns the same result.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value carried by the operation result.
+        /// </typeparam>
+        /// <param name="result">
+        /// The typed operation result to pass to the action.
+        /// </param>
+        /// <param name="action">
+        /// An action to invoke with the current typed operation result, regardless of its state.
+        /// </param>
+        /// <returns>
+        /// Returns the same <see cref="IOperationResult{T}"/> that was passed in, allowing further
+        /// chaining. If the action throws an exception implementing <see cref="IOperationError"/>
+        /// it is wrapped in a failed result; any other unhandled exception is also wrapped as a failure.
+        /// </returns>
+        public static IOperationResult<T> Tap<T>(this IOperationResult<T> result, Action<IOperationResult<T>> action)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(action, nameof(action));
+
+            try
+            {
+                action(result);
+                return result;
+            }
+            catch (Exception ex) when(ex is IOperationError)
+            {
+                return OperationResult<T>.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<T>.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
+        /// <summary>
+        /// Asynchronously executes a side-effect action on the typed operation result without
+        /// altering the result, and then returns the same result.
+        /// </summary>
+        /// <typeparam name="T">
+        /// The type of the value carried by the operation result.
+        /// </typeparam>
+        /// <param name="result">
+        /// The typed operation result to pass to the action.
+        /// </param>
+        /// <param name="action">
+        /// An asynchronous action to invoke with the current typed operation result, regardless of its state.
+        /// </param>
+        /// <returns>
+        /// Returns a <see cref="Task{TResult}"/> that resolves to the same <see cref="IOperationResult{T}"/>
+        /// that was passed in, allowing further chaining. If the action throws an exception implementing
+        /// <see cref="IOperationError"/> it is wrapped in a failed result; any other unhandled exception
+        /// is also wrapped as a failure.
+        /// </returns>
+        public static async Task<IOperationResult<T>> TapAsync<T>(this IOperationResult<T> result, Func<IOperationResult<T>, Task> action)
+        {
+            Check.ThrowIfNull(result, nameof(result));
+            Check.ThrowIfNull(action, nameof(action));
+
+            try
+            {
+                await action(result).ConfigureAwait(false);
+                return result;
+            }
+            catch (Exception ex) when(ex is IOperationError)
+            {
+                return OperationResult<T>.Fail((IOperationError) ex);
+            }
+            catch (Exception ex)
+            {
+                return OperationResult<T>.Fail(
+                    "UnhandledException", 
+                    "RESULT", 
+                    "An unhandled exception occurred while executing the operation.",
+                    ex.AsOperationError());
+            }
+        }
+        
         /// <summary>
         /// Attempts to match the operation result to a specific state
         /// that can be handled by the caller.
