@@ -157,7 +157,17 @@ namespace Deveel
 
         }
 
-        [Fact]
+        [Fact] 
+        public static void ImplicitlyConvertFromOperationError_Fail(){
+            var error = new OperationError("err.1", "biz", "An error occurred");
+            OperationResult<int> result = error;
+            
+            Assert.Equal(OperationResultType.Error, result.ResultType);
+            Assert.NotNull(result.Error);
+            Assert.Equal("err.1", result.Error.Code);
+        }
+
+    [Fact]
         public static void OperationResult_FailForValidation()
         {
             var validations = new[] {

@@ -162,6 +162,20 @@ namespace Deveel
         public static implicit operator OperationResult<T>(OperationException error) => Fail(error);
 
         /// <summary>
+        /// Implicitly converts an instance of <see cref="OperationError"/>
+        /// to an operation result that represents a failure.
+        /// </summary>
+        /// <param name="error">
+        /// The error that caused the operation to fail
+        /// </param>
+        /// <returns>
+        /// Returns an instance of <see cref="OperationResult{T}"/> that
+        /// represents the error.
+        /// </returns>
+        /// <seealso cref="Fail(IOperationError)"/>
+        public static implicit operator OperationResult<T>(OperationError error) => Fail(error);
+        
+        /// <summary>
         /// Implicitly converts the result to its value
         /// </summary>
         /// <param name="result">
